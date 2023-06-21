@@ -51,7 +51,4 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-    public function changeTime() {
-        return view('profile.changeInterval');
-    }
 }

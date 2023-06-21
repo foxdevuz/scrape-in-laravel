@@ -13,10 +13,7 @@
                     <x-input-label for="target" :value="__('Url')" />
                     <x-text-input id="target" class="block mt-1 w-full" type="text" name="targetUrl" placeholder="Enter target url to parse" required/>
                     
-                    <x-input-label for="interval" class="mt-3" :value="__('Interval of getting update')" />
-                    <x-text-input id="interval" class="block mt-1 w-full" type="text" name="interval" placeholder="Enter second for getting updates in this second" required/>
-                    
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('error')" class="mt-2" />
                 </div>
     
                 <div class="flex items-center justify-end mt-4">
