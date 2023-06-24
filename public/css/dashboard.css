@@ -1,0 +1,24 @@
+#cryptos {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+    /* justify-content: left; */
+    text-align: center;
+}
+#cryptos div {
+    margin-bottom: 10px;
+}
+.dn {
+    display: none;
+}
+.cryptoContainerList {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    /* justify-content: center; */
+}
+.cryptoContainerList i {
+    padding: 0 0 0 10px;
+    color: red;
+    cursor: pointer;
+}
