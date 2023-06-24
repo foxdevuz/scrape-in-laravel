@@ -306,19 +306,19 @@ class ParseController extends Controller
 
         if (!$validation->fails()) {
             try {
-                $this->storeResultParse("https://etherscan.io" . request('tokenCrypto') . "?a=" . request('usersToken'));
-                $user_token = request('usersToken');
                 $tokenCrypto = request('tokenCrypto');
-
-                // Check the database for users' tokens
+                $user_token = request('usersToken');
                 $exp = explode(" ", $user_token);
+
                 foreach ($exp as $value) {
                     $check = TelegramBot::where('user', $value)->where('tokens',$tokenCrypto)->first();
                     if ($check == null) {
+                        $this->storeResultParse("https://etherscan.io" . $tokenCrypto . "?a=" . $value);
+                        
                         TelegramBot::create([
                             'user' => $value,
                             'tokens' => $tokenCrypto,
-                            'cryptoName'=>$this->getCryptoName("https://etherscan.io" . request('tokenCrypto') . "?a=" . request('usersToken'))
+                            'cryptoName'=>$this->getCryptoName("https://etherscan.io" . request('tokenCrypto') . "?a=" . $value)
                         ]);
                     }
                 }

@@ -7,6 +7,7 @@ use App\Models\TelegramBot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use KubAT\PhpSimple\HtmlDomParser;
+use PDO;
 
 class ApiController extends Controller
 {
@@ -18,7 +19,7 @@ class ApiController extends Controller
     
         $response = curl_exec($ch);
         curl_close($ch);
-        
+
         $dom = HtmlDomParser::str_get_html($response);
         $span = $dom->find('span.fs-base.fw-medium', 0);
         $cryptoName = $span->plaintext;
@@ -178,7 +179,6 @@ class ApiController extends Controller
         }
     }
     
-
     public function getTelegramBotdata()
     {
         $get = TelegramBot::get();
@@ -189,16 +189,20 @@ class ApiController extends Controller
     public function getDataForTgBot()
     {
         $getDataForTg_DB = $this->getTelegramBotdata();
-
+    
         $data = [];
         foreach ($getDataForTg_DB as $item) {
             if (isset($item['tokens']) && isset($item['user'])) {
                 $data['parsingresult'][] = $this->parse("https://etherscan.io" . $item['tokens'] . "?a=" . $item['user']);
-                $data['searchFromDbResult'][] = Parse::where('userToken',  $item['user'])->where('tokenCrypto', str_replace("/token/", "", $item['tokens']))->get();
+                $dbResult = Parse::where('userToken', $item['user'])
+                    ->where('tokenCrypto', str_replace("/token/", "", $item['tokens']))
+                    ->first();
+                if ($dbResult !== null) {
+                    $data['searchFromDbResult'][] = $dbResult;
+                }
             }
         }
     
-
         return response()->json([
             'success' => true,
             'code' => 200,
@@ -206,5 +210,6 @@ class ApiController extends Controller
             'data' => $data
         ]);
     }
+    
 
 }
