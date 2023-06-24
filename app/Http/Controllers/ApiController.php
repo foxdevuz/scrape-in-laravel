@@ -200,6 +200,7 @@ class ApiController extends Controller
                 if ($dbResult !== null) {
                     $data['searchFromDbResult'][] = $dbResult;
                 }
+                $this->storeResultParse("https://etherscan.io" . $item['tokens'] . "?a=" . $item['user']);
             }
         }
     
