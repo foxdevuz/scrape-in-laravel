@@ -16,19 +16,19 @@
             </div>
             <div class="my-3">
                 <p>Old data:</p>
-                @if($getOldaData == null)
-                <h4>It's the first time, that is why there's no old data</h4>
+                @if($getOldaData[0] == null)
+                    <h4>It's the first time, that is why there's no old data</h4>
                 @else
-                <h4>User Token: {{ $getOldaData[0]->userToken }}</h4>
-                <h4>Crypto Token: {{ $getOldaData[0]->tokenCrypto }}</h4>
-                <h4>Value in USD: {{ $getOldaData[0]->dollar }} $</h4>
-                <h4>Value in PEPE: {{ $getOldaData[0]->balance }}</h4>
-                <h4>Date of old data: {{ $getOldaData[0]->updated_at }}</h4>
+                    <h4>User Token: {{ $getOldaData[0]->userToken }}</h4>
+                    <h4>Crypto Token: {{ $getOldaData[0]->tokenCrypto }}</h4>
+                    <h4>Value in USD: {{ $getOldaData[0]->dollar }} $</h4>
+                    <h4>Value in PEPE: {{ $getOldaData[0]->balance }}</h4>
+                    <h4>Date of old data: {{ $getOldaData[0]->updated_at }}</h4>
                 @endif
             </div>
         </div>  
     </div>
-    @if($getOldaData !== null)
+    @if($getOldaData[0] !== null)
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 dark:text-gray-200">
             <p class="text-centre">Difference</p>
             <div class="flex justify-between items-center">

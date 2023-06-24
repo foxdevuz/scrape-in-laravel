@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/getdata', [ParseController::class, 'showData'])->name('getAlldata');
     Route::post('/getdata', [ParseController::class, 'getData']);
     Route::post('/sendTG', [ParseController::class, 'dataForTelegramBot']);
+    Route::get('/deleteSub', [ParseController::class, 'destroyNotificationTelegramBot']);
 });
 
 // send message

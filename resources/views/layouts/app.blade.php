@@ -64,12 +64,17 @@
                         let cryptoListItem = $("<div>").text(selectedText).addClass("cryptoContainerList");
                         let trashIcon = $("<i>").addClass("fa-solid fa-trash");
 
+                        let inputHiddenName = $("<input>")
+                            .attr("type", "text")
+                            .val(selectedText)
+                            .addClass("dn")
+                            .attr("name", 'tokenCryptoName');
+
                         let inputHidden = $("<input>")
                             .attr("type", "text")
                             .val(selectedValue)
                             .addClass("dn")
                             .attr("name", 'tokenCrypto');
-
                         let divButton = $("<div>")
                             .addClass("flex items-center justify-end mt-4");
 
@@ -103,6 +108,7 @@
                         addForm.append(inputUserToken);
                         addForm.append(divButton);
                         addForm.append(inputHidden);
+                        addForm.append(inputHiddenName);
 
                         cryptoListItem.append(trashIcon);
                         parentDivCrypto.append(cryptoListItem);

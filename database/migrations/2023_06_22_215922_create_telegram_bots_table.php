@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('tokens');
             $table->text('user');
+            $table->text('cryptoName');
             $table->timestamps();
         });
     }

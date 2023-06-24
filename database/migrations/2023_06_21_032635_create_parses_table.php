@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('userToken');
             $table->text('tokenCrypto');
+            $table->text('cryptoName');
             $table->string('balance');
             $table->string('dollar');
             $table->timestamps();

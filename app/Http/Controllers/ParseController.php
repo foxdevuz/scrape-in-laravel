@@ -10,8 +10,11 @@ use App\Models\Parse;
 use App\Models\TelegramBot;
 use DOMDocument;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\Cast;
 use Telegram\Bot\Laravel\Facades\Telegram;
+
+use function Pest\Laravel\json;
 
 class ParseController extends Controller
 {
@@ -82,7 +85,29 @@ class ParseController extends Controller
         $dataArray['userToken'] = $aValue;
         $dataArray['valueInDollar'] = $valInUSD;
         $dataArray['currentBalance'] = $realCurrentBalance;
+        $dataArray['cryptoName'] = $this->getCryptoName($target);
         return $dataArray;
+    }
+
+    public function getCryptoName($target = "https://etherscan.io/token/0x6982508145454ce325ddbe47a25d4ec3d2311933?a=0xcca1303632437310c8b7e237251dc203d94a89c5") {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $target);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    
+        $response = curl_exec($ch);
+        curl_close($ch);
+    
+        $dom = HtmlDomParser::str_get_html($response);
+    
+        // Find the span with class "fs-base fw-medium"
+        $span = $dom->find('span.fs-base.fw-medium', 0);
+    
+        // Get the text content of the span
+        $cryptoName = $span->plaintext;
+    
+        // Return the cryptocurrency name
+        return $cryptoName;
     }
 
     public function getTokensNumber($target = "https://etherscan.io/tokens")
@@ -169,6 +194,7 @@ class ParseController extends Controller
                 'tokenCrypto' => $tokenAddress,
                 'balance' => $balance,
                 'dollar' => $valueInDollar,
+                'cryptoName'=>trim($this->getCryptoName($url))
             ]);
         } else {
             $check->update([
@@ -200,10 +226,6 @@ class ParseController extends Controller
             'getOldaData' => $inf,
             'getNewData' => $this->parse(Cache::get('url')),
         ]);
-    }
-
-    public function getTgbotList() {
-        
     }
 
     public function getData(Request $request)
@@ -279,7 +301,7 @@ class ParseController extends Controller
     {
         $validation = Validator::make($request->all(), [
             'usersToken' => ['required'],
-            'tokenCrypto' => ['required']
+            'tokenCrypto' => ['required'],
         ]);
 
         if (!$validation->fails()) {
@@ -295,7 +317,8 @@ class ParseController extends Controller
                     if ($check == null) {
                         TelegramBot::create([
                             'user' => $value,
-                            'tokens' => $tokenCrypto
+                            'tokens' => $tokenCrypto,
+                            'cryptoName'=>$this->getCryptoName("https://etherscan.io" . request('tokenCrypto') . "?a=" . request('usersToken'))
                         ]);
                     }
                 }
@@ -309,6 +332,34 @@ class ParseController extends Controller
         }
     }
 
+    public function destroyNotificationTelegramBot(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'name' => ['required'],
+            'user_id' => ['required'],
+        ]);
+    
+        // return response()->json($request->all());
+        // exit;
+        if ($validation->fails()) {
+            return redirect()->back()->withErrors('error1', 'Validation failed');
+        }
+    
+        $check = DB::table('telegram_bots')
+            ->where('tokens', $request->input('name'))
+            ->where('user', $request->input('user_id'))
+            ->first();
+        
+        if ($check) {
+            DB::table('telegram_bots')
+                ->where('tokens', $request->input('name'))
+                ->where('user', $request->input('user_id'))
+                ->delete();
+            return redirect()->back()->with('success', 'Record deleted successfully.');
+        } else {
+            return redirect()->back()->withErrors('error1', 'Record not found.');
+        }
+    }
     
 
 }

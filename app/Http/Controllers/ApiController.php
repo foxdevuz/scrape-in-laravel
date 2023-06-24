@@ -10,6 +10,20 @@ use KubAT\PhpSimple\HtmlDomParser;
 
 class ApiController extends Controller
 {
+    public function getCryptoName($target = "https://etherscan.io/token/0x6982508145454ce325ddbe47a25d4ec3d2311933?a=0xcca1303632437310c8b7e237251dc203d94a89c5") {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $target);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        $dom = HtmlDomParser::str_get_html($response);
+        $span = $dom->find('span.fs-base.fw-medium', 0);
+        $cryptoName = $span->plaintext;
+        return trim($cryptoName);
+    }
     private function parse($target = "https://etherscan.io/token/0x6982508145454ce325ddbe47a25d4ec3d2311933?a=0xcca1303632437310c8b7e237251dc203d94a89c5")
     {
         $ch = curl_init();
@@ -65,6 +79,7 @@ class ApiController extends Controller
         $dataArray['userToken'] = $aValue;
         $dataArray['valueInDollar'] = $valInUSD;
         $dataArray['currentBalance'] = $realCurrentBalance;
+        $dataArray['cryptoName'] = $this->getCryptoName($target);
         return $dataArray;
     }
 

@@ -1,4 +1,4 @@
-{{ dd($telegramNotification) }}
+{{-- {{ dd($telegramNotification) }} --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -53,20 +53,23 @@
         </div>
     </div>
 
-    <div class="py-12 dark:text-gray-200">
-        <table style="width:100%">
-            <tr>
-                <th>User's token</th>
-                <th>Crypto token</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>Alfreds Futterkiste</td>
-                <td>Maria Anders</td>
-                <td>Germany</td>
-            </tr>
-        </table>
-    </div>
-
+    @if(!$telegramNotification == null)
+        <div class="py-12 dark:text-gray-200">
+            <table style="width:100%; text-align:left;" >
+                <tr style="text-align: center;">
+                    <th>User's token</th>
+                    <th>Crypto token</th>
+                    <th>Action</th>
+                </tr>
+                    @foreach ($telegramNotification as $item )
+                        <tr style="text-align: center;">
+                            <td>{{ $item->user }}</td>
+                            <td>{{ $item->cryptoName }}</td>
+                            <td><a href="/deleteSub?name={{ $item->tokens }}&user_id={{ $item->user }}"><i class="fa-solid fa-trash"></i></a></td>
+                        </tr>
+                    @endforeach
+            </table>
+        </div>
+    @endif
     
 </x-app-layout>
